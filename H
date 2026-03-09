@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Reels Style Website</title>
+
+<style>
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        background-color: #000;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .video-container {
+        height: 100vh;
+        width: 100%;
+        scroll-snap-align: start;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* UI Overlay Styles */
+    .ui-layer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none; /* Let clicks pass through to video */
+        background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    }
+
+    .sidebar {
+        position: absolute;
+        right: 10px;
+        bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        pointer-events: auto;
+    }
+
+    .action-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.2s;
+    }
+
+    .action-btn:active { transform: scale(0.9); }
+
+    .caption-area {
+        position: absolute;
+        bottom: 20px;
+        left: 15px;
+        color: white;
+        pointer-events: auto;
+        width: 75%;
+    }
+
+    .username { font-weight: bold; margin-bottom: 5px; display: block; }
+    .description { font-size: 14px; line-height: 1.4; }
+
+    /* Play/Pause Indicator */
+    .play-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 60px;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+    }
+    
+    .paused .play-icon { opacity: 1; }
+</style>
+
+</head>
+
+<body>
+
+<!-- Video 1 -->
+<div class="video-container">
+    <video src="https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4" loop playsinline muted></video>
+    
+    <div class="ui-layer">
+        <div class="sidebar">
+            <button class="action-btn">❤️</button>
+            <button class="action-btn">💬</button>
+            <button class="action-btn">↪️</button>
+        </div>
+        <div class="caption-area">
+            <span class="username">@neon_vibes</span>
+            <span class="description">Walking through the city lights at night. 🌃 #neon #city</span>
+        </div>
+    </div>
+    <div class="play-icon">▶️</div>
+</div>
+
+<!-- Video 2 -->
+<div class="video-container">
+    <video src="https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4" loop playsinline muted></video>
+    
+    <div class="ui-layer">
+        <div class="sidebar">
+            <button class="action-btn">❤️</button>
+            <button class="action-btn">💬</button>
+            <button class="action-btn">↪️</button>
+        </div>
+        <div class="caption-area">
+            <span class="username">@nature_lover</span>
+            <span class="description">Spring is finally here! 🌸</span>
+        </div>
+    </div>
+    <div class="play-icon">▶️</div>
+</div>
+
+<!-- Video 3 -->
+<div class="video-container">
+    <video src="https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4" loop playsinline muted></video>
+    
+    <div class="ui-layer">
+        <div class="sidebar">
+            <button class="action-btn">❤️</button>
+            <button class="action-btn">💬</button>
+            <button class="action-btn">↪️</button>
+        </div>
+        <div class="caption-area">
+            <span class="username">@ocean_blue</span>
+            <span class="description">Peaceful waves. 🌊</span>
+        </div>
+    </div>
+    <div class="play-icon">▶️</div>
+</div>
+
+<script>
+    // 1. Setup Intersection Observer to handle autoplay/pause
+    const videos = document.querySelectorAll('video');
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.6 // Video must be 60% visible to play
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const video = entry.target;
+            const container = video.closest('.video-container');
+
+            if (entry.isIntersecting) {
+                // Video is in view: Play it
+                video.play().catch(error => {
+                    console.log("Autoplay prevented, waiting for interaction.");
+                });
+                container.classList.remove('paused');
+            } else {
+                // Video is out of view: Pause it and reset time
+                video.pause();
+                video.currentTime = 0;
+                container.classList.add('paused');
+            }
+        });
+    }, observerOptions);
+
+    videos.forEach(video => {
+        observer.observe(video);
+        
+        // 2. Click to toggle Play/Pause
+        video.addEventListener('click', () => {
+            if (video.paused) {
+                video.play();
+                video.closest('.video-container').classList.remove('paused');
+            } else {
+                video.pause();
+                video.closest('.video-container').classList.add('paused');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
